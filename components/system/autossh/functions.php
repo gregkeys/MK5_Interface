@@ -3,7 +3,6 @@
 
 if(isset($_GET['autossh'])){
   echo autossh($_GET['autossh']);
-  echo $_GET['autossh'];
 }
 
 if(isset($_GET['action'])){
@@ -55,7 +54,7 @@ function generate_key(){
 }
 
 function edit_command($host, $port, $listen){
-  exec('uci set autossh.@autossh[0].ssh="-i /etc/dropbear/id_rsa -N -T -R '.$port.':localhost:'.$listen.' '.$host.'"');
+  exec('uci set autossh.@autossh[0].ssh="-i /root/.ssh/id_rsa -N -T -R '.$port.':localhost:'.$listen.' '.$host.'"');
   exec('uci commit autossh');
   return "<font color='lime'>AutoSSH configuration updated.</font>";
 }

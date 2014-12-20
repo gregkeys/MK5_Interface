@@ -15,17 +15,16 @@ $submitted_pass =  crypt($_POST["password"], $salt);
 $actual_pass = $salt.$password;
 
 
-if(isset($_POST['login'])){
-  if($submitted_pass == $actual_pass && $_POST['username'] == "root"){
+if (isset($_POST['login'])) {
+    if ($submitted_pass == $actual_pass && $_POST['username'] == "root") {
 
-    $_SESSION['logged_in'] = true;
-    header('Location: /');
+        $_SESSION['logged_in'] = true;
+        $_SESSION['_csrfToken'] = sha1(session_id());
+        header('Location: /');
 
-  }else{
-
-    $message = "<font color='red'>Invalid username / password</font>";
-
-  }
+    } else {
+        $message = "<font color='red'>Invalid username / password</font>";
+    }
 }
 
 ?>
@@ -65,4 +64,5 @@ if(isset($_POST['login'])){
 
 
 </html>
-<?php exit(); ?>
+<?php 
+exit();
