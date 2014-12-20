@@ -165,5 +165,3 @@ function get_macs(){
 		echo $mac."<br />";
 	}
 }
-
-?>

@@ -15,5 +15,3 @@ if (isset($_GET['action'])) {
 function get_status_bar(){
 	echo exec('uptime');
 }
-
-?>

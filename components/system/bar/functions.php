@@ -543,5 +543,3 @@ function download_packaged_infusion($infusion){
     exit;
   }
 }
-
-?>

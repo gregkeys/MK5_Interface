@@ -16,5 +16,3 @@ function check_login(){
     exit();
   }
 }
-
-?>

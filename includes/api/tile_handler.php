@@ -116,5 +116,3 @@ function get_hidden_tiles(){
   }
 
 }
-
-?>

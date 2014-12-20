@@ -203,5 +203,3 @@ if(!function_exists("change_password")){
     }
   }
 }
-
-?>

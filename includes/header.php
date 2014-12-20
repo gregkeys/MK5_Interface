@@ -7,4 +7,3 @@ ob_start ();
 {
   //All functions go inside here.
 }
-?>

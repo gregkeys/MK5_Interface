@@ -51,5 +51,3 @@ function update_small_tile(){
   include($directory."small_tile.php");
 }
 
-?>
-

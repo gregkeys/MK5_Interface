@@ -30,6 +30,3 @@ if(empty($infusions)){
 
   }
 }
-
-
-?>

@@ -113,5 +113,3 @@ function change_password($current_pass, $new_pass){
   }
   return false;
 }
-
-?>

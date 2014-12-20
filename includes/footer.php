@@ -5,4 +5,3 @@ if(substr($containing_dir, 0, 10) == "/pineapple" || substr($containing_dir, 0, 
   require_once('/pineapple/includes/api/auth.php');
   echo $previous_content;
 }
-?>
