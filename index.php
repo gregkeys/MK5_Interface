@@ -16,13 +16,14 @@ if(isset($_GET['noJS'])){echo "You need to have JavaScript enabled to use the we
   <meta http-equiv="pragma" content="no-cache" />
   <link rel="stylesheet" type="text/css" href="includes/css/styles.php" />
   <script src="includes/js/jquery.min.js"></script>
-  <script src="includes/js/functions.js" type="text/javascript" ></script>
+  <script src="includes/js/pineapple.js" type="text/javascript" ></script>
+  <script src="includes/js/deprecated_api.js" type="text/javascript" ></script>
   <noscript><meta http-equiv="refresh" content="0;url=index.php?noJS" /></noscript>
   <link rel="shortcut icon" href="/includes/img/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/includes/img/favicon.ico" type="image/x-icon">
 </head>
 
-<body onload="init()">
+<body>
 	<div class="statusBar"><div class="statusBar_content">Loading Interface</div><div class="logout"><a href="/?logout"><img src="/includes/img/exit.png"></a></div></div>
   <div class='popup'>
     <a id='close' href='JAVASCRIPT: close_popup()'>[X]</a>
