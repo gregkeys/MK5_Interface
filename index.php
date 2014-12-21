@@ -25,13 +25,14 @@ if (isset($_GET['noJS'])) {
     <link rel="stylesheet" type="text/css" href="includes/css/styles.php?version=<?=file_get_contents("/etc/pineapple/pineapple_version")?>" />
     <?php echo (file_exists('/pineapple/includes/css/disable_help')) ? '<style>help:before{display: none;}</style>' : ''; ?>
     <script src="includes/js/jquery.min.js"></script>
-    <script src="includes/js/functions.js?version=<?=file_get_contents("/etc/pineapple/pineapple_version")?>" type="text/javascript" ></script>
+    <script src="includes/js/pineapple.js?version=<?=file_get_contents("/etc/pineapple/pineapple_version")?>" type="text/javascript" ></script>
+    <script src="includes/js/deprecated_api.js" type="text/javascript" ></script>
     <noscript><meta http-equiv="refresh" content="0;url=index.php?noJS" /></noscript>
     <link rel="shortcut icon" href="/includes/img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/includes/img/favicon.ico" type="image/x-icon">
 </head>
 
-<body onload="init()">
+<body>
     <div class="statusBar"> 
         <div class="statusBar_widget" >
             <span class="statusBar_notification_toggle">

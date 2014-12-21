@@ -47,3 +47,39 @@ function hide_large_tile() {
 function handle_hash_change(hashValue) {
     Pineapple.handle_hash_change(hashValue);
 }
+
+function toggle_notifications(){
+    Pineapple.toggle_notifications();
+}
+
+function get_tab(link, callback){
+    Pineapple.get_tab(link, callback);
+}
+
+function select_tab_content(tab){
+    Pineapple.select_tab_content(tab);
+}
+
+function refresh_current_tab(callback){
+    Pineapple.refresh_current_tab(callback);
+}
+
+function toggle_views(){
+    Pineapple.toggle_views();
+}
+
+function select_view(view){
+    Pineapple.select_view(view);
+}
+
+function toggle_hidden_bar_mobile(){
+    Pineapple.toggle_hidden_bar_mobile()
+}
+
+function  load_tiles(){
+    Pineapple.load_tiles();
+}
+
+function populate_hidden_tiles(){
+    Pineapple.populate_hidden_tiles();
+}
