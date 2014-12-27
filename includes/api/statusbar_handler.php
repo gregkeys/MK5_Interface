@@ -22,13 +22,25 @@ if (isset($_GET['action'])) {
     }
 }
 
+function ajax_response($data, $type='json')
+{
+    switch($type){
+        case 'json':
+            // Use the correct json mime-type
+            header('Content-Type: application/json');
+            echo json_encode($data);
+            break;
+    }
+
+    exit;
+}
 
 function get_status_bar()
 {
-    $status_bar = array();
-    array_push($status_bar, exec('date +"%T"'));
-    array_push($status_bar, get_notifications());
-    echo json_encode($status_bar);
+    $status_bar                 = new stdClass();
+    $status_bar->time           = exec('date +"%T"');
+    $status_bar->notifications  = get_notifications();
+    ajax_response($status_bar);
 }
 
 
