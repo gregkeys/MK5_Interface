@@ -83,3 +83,8 @@ function  load_tiles(){
 function populate_hidden_tiles(){
     Pineapple.populate_hidden_tiles();
 }
+
+
+function clear_notifications(){
+    Pineapple.clear_notifications();
+}
