@@ -4,13 +4,34 @@ var Pineapple = Pineapple || {};
 (function (window, $, exports, undefined) {
     'use strict';
 
-    /*set up variables*/
-    var notification_interval,
-        tile_updaters = [],
-        _csrfToken = $('meta[name=_csrfToken]').attr('content'),
-        infusions = {};
+    /*
+    * set up & manually hoist variables
+    *
+    */
+    var tile_updaters = [],
+        _csrfToken,
+        infusions = {},
+        //the $ here simply indicates the variable will be a jQuery Dom Element, not to be confused with a PHP variable declaration
+        $statusBar_clock,
+        $num_notifications,
+        $notification_img,
+        $notifications,
+        $popup,
+        $popup_content,
+        $tile_expanded,
+        eBunny;
+
 
     $(document).ready(function () {
+        _csrfToken = $('meta[name=_csrfToken]').attr('content');
+        $statusBar_clock = $(".statusBar_clock");
+        $num_notifications = $("#num_notifications");
+        $notification_img = $(".notification_img");
+        $notifications = $(".notifications");
+        $popup = $('.popup');
+        $popup_content = $('.popup_content');
+        $tile_expanded = $('.tile_expanded');
+
         /*
          Loads all components and sets up the interface
          */
@@ -32,28 +53,28 @@ var Pineapple = Pineapple || {};
      and update the status bar.
      */
     function notification_handler() {
-        clearInterval(notification_interval);
-        notification_interval = setInterval(function(){
-            $.get("/includes/api/statusbar_handler.php", {action: "get_status_bar"}, function(data){
-                data = JSON.parse(data);
-                $(".statusBar_clock").html(data[0]);
+        var i;
+            $.get("/includes/api/statusbar_handler.php", {action: "get_status_bar"}, function(data) {
+                if (data.hasOwnProperty("time") && data.hasOwnProperty("notifications")) {
+                    $statusBar_clock.html(data.time);
 
-                var notifications = data[1];
-                if (notifications.length == 0){
-                    $("#num_notifications").text("-");
-                    $(".notification_img").css('visibility', 'hidden');;
-                }else{
-                    if (notifications.length != $("#num_notifications").text()) {
-                        $(".notification_img").css('visibility', 'visible');;
+                    if (data.notifications.length === 0) {
+                        $num_notifications.text("-");
+                        $notification_img.hide();
+                    } else {
+                        $notifications.html("");
+                        $num_notifications.text(data.notifications.length);
+                        $notification_img.show();
+
+                        for (i = 0; i < data.notifications.length; i++) {
+                            $notifications.prepend("<div class='notification'>" + data.notifications[i]['notification'] + "</div>");
+                        }
                     }
-                    $("#num_notifications").text(notifications.length);
-                    $(".notifications").html("");
-                    for (var i = 0; i < notifications.length; i++) {
-                        $(".notifications").prepend("<div class='notification'>"+notifications[i]['notification']+"</div>");
-                    }
+
+                    //Useing a timeout instead of an interval helps prevent problems in the event of a slow ajax response
+                    setTimeout(notification_handler, 2800);
                 }
-            });
-        }, 2800);
+            })
     }
 
 
@@ -64,7 +85,7 @@ var Pineapple = Pineapple || {};
     //This handler listens for the escape key
         $(document).keyup(function(e){
             if(e.keyCode == 27){
-                if($(".popup").css('visibility') !== 'hidden'){
+                if($popup.is(":visible")){
                     close_popup();
                 }else{
                     hide_large_tile();
@@ -198,7 +219,7 @@ var Pineapple = Pineapple || {};
         window.setInterval = function(funct, time, type){
             switch(type){
                 case 'large_tile':
-                    var condition = "$('.tile_expanded').css('visibility') == 'hidden'";
+                    var condition = "$tile_expanded.is(':visible') === false";
                     break;
                 case 'popup':
                     var condition = "$('.popup').css('visibility') == 'hidden'";
@@ -379,7 +400,7 @@ var Pineapple = Pineapple || {};
         toggle_notifications();
         $.get('/includes/api/statusbar_handler.php?action=clear_notifications', function(){
             $(".notification_img").hide();
-            $(".notifications").html("");
+            $notifications.html("");
             $("#num_notifications").text("-");
         });
     };
@@ -409,7 +430,7 @@ var Pineapple = Pineapple || {};
             });
 
             $("[id='"+name+"_title']").bind('click', function() {
-                if($('.tile_expanded').css('visibility') == 'hidden'){
+                if($tile_expanded.is(':visible') === false){
                     draw_large_tile(name, type);
                 }
             });
@@ -504,8 +525,8 @@ var Pineapple = Pineapple || {};
      TODO
      */
     exports.popup = function (message) {
-        $('.popup_content').html(message);
-        $('.popup').css('visibility', 'visible');
+        $popup_content.html(message);
+        $popup.show();
     };
 
 
@@ -513,8 +534,8 @@ var Pineapple = Pineapple || {};
      TODO
      */
     exports.close_popup = function () {
-        $('.popup').css('visibility', 'hidden');
-        $('.popup_content').html('');
+        $popup.hide();
+        $popup_content.html('');
     };
 
 
@@ -523,12 +544,24 @@ var Pineapple = Pineapple || {};
      */
     exports.draw_large_tile = function (name, type, data) {
         $("div[id='"+name+"']").css('box-shadow', 'none');
-        $('.tile_expanded').css('visibility', 'visible');
-        $('.tile_expanded').html('<center><div class="entropy">Entropy bunny is working..</div><div class="entropy" id="1"><pre>(\\___/)\n(=\'.\'=)\n(")_(")</div><div class="entropy" id="2" style="display: none"><pre> /)___(\\ \n(=\'.\'=)\n(")_(")</div><script type="text/javascript">$(function (){interval = setInterval(function(){$(".entropy#1").toggle(); $(".entropy#2").toggle();}, 200);});</script>');
+        exports.startBunny();
+
         $.get('/components/'+type+'/'+name+'/handler.php?'+data, {action: "get_large_tile"}, function(data){
-            clearInterval(interval);
-            $('.tile_expanded').html('<a id="close" href="JAVASCRIPT: hide_large_tile()">[X]</a>'+data);
+            exports.stopBunny();
+            $tile_expanded.html('<a id="close" href="JAVASCRIPT: hide_large_tile()">[X]</a>'+data);
         });
+
+    };
+
+    exports.startBunny = function(){
+        var i=0,bunny = $('<pre/>',{class: 'entropy'});
+        $tile_expanded.html($('<div/>', { style: 'text-align: center', html: $('<div/>', {class: 'entropy', html: 'Entropy bunny is working..'})}).append(bunny));
+        eBunny = setInterval(function(){bunny.html(i++%2?' /)___(\\ \n(=\'.\'=)\n(")_(")':'(\\___/)\n(=\'.\'=)\n(")_(")') },200);
+        $tile_expanded.show();
+    };
+
+    exports.stopBunny = function(){
+        clearInterval(eBunny);
     };
 
 
@@ -536,8 +569,8 @@ var Pineapple = Pineapple || {};
      TODO
      */
     exports.hide_large_tile = function () {
-        $('.tile_expanded').html(' ');
-        $('.tile_expanded').css('visibility', 'hidden');
+        $tile_expanded.html(' ');
+        $tile_expanded.hide();
     };
 
 
@@ -546,27 +579,32 @@ var Pineapple = Pineapple || {};
      */
     exports.handle_hash_change = function (hashValue) {
         //[0]:type - [1]:infusion_name - [2]:action - [3]:data - [4]:callback_function
-        var hash_array = hashValue.replace(/#/g, '').split('/');
+        var hash_array = hashValue.replace(/#/g, '').split('/'),
+            dir;
+
         if(hash_array.length == 5){
             //Correct size, carry on
             $.ajaxSetup({async:false});
-            if(hash_array[0] == "usr"){
-                $.get('/components/infusions/'+hash_array[1]+'/functions.php?'+hash_array[2]+'='+hash_array[3], function(data){
-                    try{
-                        window[hash_array[4]](data);
-                    }catch(err){
-                        console.log("Function not found");
-                    }
-                });
-            }else if(hash_array[0] == "sys"){
-                $.get('/components/system/'+hash_array[1]+'/functions.php?'+hash_array[2]+'='+hash_array[3], function(data){
-                    try{
-                        window[hash_array[4]](data);
-                    }catch(err){
-                        console.log("Function not found");
-                    }
-                });
+
+            switch(hash_array[0]){
+                default:
+                case 'usr':
+                    dir = '/components/infusions/';
+                    break;
+                case 'sys':
+                    dir = '/components/system/';
+                    break;
             }
+
+
+            $.get(dir + hash_array[1]+'/functions.php?'+hash_array[2]+'='+hash_array[3] , function(data){
+                try{
+                    window[hash_array[4]](data);
+                }catch(err){
+                    console.log("Function not found");
+                }
+            });
+
             $.ajaxSetup({async:true});
         }
 
@@ -603,7 +641,7 @@ var Pineapple = Pineapple || {};
         $('#tabs li a').addClass('inactive');
         tab.removeClass('inactive');
         get_tab(tab.attr('id'));
-    }
+    };
 
 
      exports.refresh_current_tab = function(callback) {
