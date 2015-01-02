@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/WiFiPineapple/MK5_Interface.git/issues"
   },
-  "homepage": "https://github.com/WiFiPineapple/MK5_Interface.git"
+  "homepage": "https://github.com/WiFiPineapple/MK5_Interface.git",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
 }
