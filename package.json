@@ -1,0 +1,25 @@
+{
+  "name": "MK5_Interface",
+  "version": "2.1.1",
+  "description": "WiFi Pineapple MKV Webinterface source code.",
+  "main": "index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WiFiPineapple/MK5_Interface.git"
+  },
+  "keywords": [
+    "wifi",
+    "pineapple",
+    "router",
+    "hak5"
+  ],
+  "author": "sebkinne",
+  "license": "Creative Commons Modified Attribution NonCommercial ShareAlike 4.0 International Public License",
+  "bugs": {
+    "url": "https://github.com/WiFiPineapple/MK5_Interface.git/issues"
+  },
+  "homepage": "https://github.com/WiFiPineapple/MK5_Interface.git"
+}
