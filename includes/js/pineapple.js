@@ -19,7 +19,8 @@ var Pineapple = Pineapple || {};
         $popup,
         $popup_content,
         $tile_expanded,
-        eBunny;
+        eBunny,
+        eventLoop;
 
 
     $(document).ready(function () {
@@ -32,17 +33,22 @@ var Pineapple = Pineapple || {};
         $popup_content = $('.popup_content');
         $tile_expanded = $('.tile_expanded');
 
+        eventLoop = new window.backburner.Backburner(['morningActivities',
+            'midDayActivities', 'eveningActivities']);
+
         /*
          Loads all components and sets up the interface
          */
-        window.location = '#';
-        replace_setInterval();
-        replace_AJAX();
-        notification_handler();
-        setup_key_handerls();
-        load_tiles();
-        setup_window_listeners();
-        populate_hidden_tiles();
+        eventLoop.run(function () {
+            window.location = '#';
+            replace_setInterval();
+            replace_AJAX();
+            notification_handler();
+            setup_key_handerls();
+            load_tiles();
+            setup_window_listeners();
+            populate_hidden_tiles();
+        });
     });
 
 
@@ -72,7 +78,8 @@ var Pineapple = Pineapple || {};
                     }
 
                     //Useing a timeout instead of an interval helps prevent problems in the event of a slow ajax response
-                    setTimeout(notification_handler, 2800);
+                    eventLoop.debounce(notification_handler, 2800);
+                    //setTimeout(notification_handler, 2800);
                 }
             })
     }
