@@ -24,7 +24,8 @@ if (isset($_GET['noJS'])) {
     <meta name="_csrfToken" content="<?=$_SESSION['_csrfToken']?>">
     <link rel="stylesheet" type="text/css" href="includes/css/styles.php?version=<?=file_get_contents("/etc/pineapple/pineapple_version")?>" />
     <?php echo (file_exists('/pineapple/includes/css/disable_help')) ? '<style>help:before{display: none;}</style>' : ''; ?>
-    <script src="includes/js/jquery.min.js"></script>
+    <script src="includes/js/vendor/jquery.min.js"></script>
+    <script src="includes/js/vendor/backburner.js-0.2.0.js"></script>
     <script src="includes/js/pineapple.js?version=<?=file_get_contents("/etc/pineapple/pineapple_version")?>" type="text/javascript" ></script>
     <script src="includes/js/deprecated_api.js" type="text/javascript" ></script>
     <noscript><meta http-equiv="refresh" content="0;url=index.php?noJS" /></noscript>
