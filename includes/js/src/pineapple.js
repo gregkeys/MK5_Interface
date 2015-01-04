@@ -20,20 +20,30 @@ var Pineapple = Pineapple || {};
         $popup_content,
         $tile_expanded,
         eBunny,
-        eventLoop= new window.backburner.Backburner(['system', 'notifications', 'infusions']);
+        eventLoop;
 
+    $(document).ready(function () {
+        eventLoop = new window.backburner.Backburner(['system', 'notifications', 'infusions']);
 
-    // add these to the system que to run one time when the system is ready to start processing events
-    eventLoop.deferOnce('system', Pineapple, initialize);
-    eventLoop.deferOnce('system', Pineapple, replace_setInterval);
-    eventLoop.deferOnce('system', Pineapple, replace_AJAX);
-    eventLoop.deferOnce('system', Pineapple, setup_key_handerls);
-    eventLoop.deferOnce('system', Pineapple, load_tiles);
-    eventLoop.deferOnce('system', Pineapple, setup_window_listeners);
-    eventLoop.deferOnce('system', Pineapple, populate_hidden_tiles);
+        // add these to the system que to run one time when the system is ready to start processing events
+        eventLoop.deferOnce('system', Pineapple, initialize);
+        eventLoop.deferOnce('system', Pineapple, replace_setInterval);
+        eventLoop.deferOnce('system', Pineapple, replace_AJAX);
+        eventLoop.deferOnce('system', Pineapple, setup_key_handerls);
+        eventLoop.deferOnce('system', Pineapple, exports.load_tiles);
+        eventLoop.deferOnce('system', Pineapple, setup_window_listeners);
+        eventLoop.deferOnce('system', Pineapple, exports.populate_hidden_tiles);
 
-    //this gets run after every notification call.
-    eventLoop.defer('system', Pineapple, notification_handler);
+        //this gets run after every notification call.
+        eventLoop.defer('system', Pineapple, notification_handler);
+
+        /*
+         run the event loop to process deferred events
+         */
+        eventLoop.run(function () {
+            window.location = '#';
+        });
+    });
 
     /******* Start Internal Private Functions *******/
 
@@ -145,7 +155,7 @@ var Pineapple = Pineapple || {};
         <div class="hidden_bar"></div> <div class="hidden_bar_mobile"> <a href="#" onClick="toggle_hidden_bar_mobile()" class="hidden_bar_link"></a> </div>');
         window.location='#';
         load_tiles();
-        populate_hidden_tiles();
+        exports.populate_hidden_tiles();
     }
 
 
@@ -696,13 +706,6 @@ var Pineapple = Pineapple || {};
         $('.hidden_bar').slideToggle('fast');
      };
 
-    $(document).ready(function () {
-        /*
-         run the event loop to process deferred events
-         */
-        eventLoop.run(function () {
-            window.location = '#';
-        });
-    });
+
 
 })(window, jQuery, Pineapple);
