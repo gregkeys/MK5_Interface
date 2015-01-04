@@ -20,10 +20,28 @@ var Pineapple = Pineapple || {};
         $popup_content,
         $tile_expanded,
         eBunny,
-        eventLoop;
+        eventLoop= new window.backburner.Backburner(['system', 'notifications', 'infusions']);
 
 
-    $(document).ready(function () {
+    // add these to the system que to run one time when the system is ready to start processing events
+    eventLoop.deferOnce('system', Pineapple, initialize);
+    eventLoop.deferOnce('system', Pineapple, replace_setInterval);
+    eventLoop.deferOnce('system', Pineapple, replace_AJAX);
+    eventLoop.deferOnce('system', Pineapple, setup_key_handerls);
+    eventLoop.deferOnce('system', Pineapple, load_tiles);
+    eventLoop.deferOnce('system', Pineapple, setup_window_listeners);
+    eventLoop.deferOnce('system', Pineapple, populate_hidden_tiles);
+
+    //this gets run after every notification call.
+    eventLoop.defer('system', Pineapple, notification_handler);
+
+    /******* Start Internal Private Functions *******/
+
+    /**
+     * setup local varaiables with their dom selections
+     */
+    function initialize()
+    {
         _csrfToken = $('meta[name=_csrfToken]').attr('content');
         $statusBar_clock = $(".statusBar_clock");
         $num_notifications = $("#num_notifications");
@@ -32,31 +50,13 @@ var Pineapple = Pineapple || {};
         $popup = $('.popup');
         $popup_content = $('.popup_content');
         $tile_expanded = $('.tile_expanded');
+    }
 
-        eventLoop = new window.backburner.Backburner(['morningActivities',
-            'midDayActivities', 'eveningActivities']);
-
-        /*
-         Loads all components and sets up the interface
-         */
-        eventLoop.run(function () {
-            window.location = '#';
-            replace_setInterval();
-            replace_AJAX();
-            notification_handler();
-            setup_key_handerls();
-            load_tiles();
-            setup_window_listeners();
-            populate_hidden_tiles();
-        });
-    });
-
-
-    /******* Start Internal Private Functions *******/
 
     /*
      Function to handle notifications
      and update the status bar.
+     also triggers processing of the event Loops
      */
     function notification_handler() {
         var i;
@@ -77,8 +77,11 @@ var Pineapple = Pineapple || {};
                         }
                     }
 
+                    // since we added the notifications to the event loop now all we have to do is run the loop after the notification check is complete and it will run this again.
+                    eventLoop.run();
+
                     //Useing a timeout instead of an interval helps prevent problems in the event of a slow ajax response
-                    eventLoop.debounce(notification_handler, 2800);
+                    //eventLoop.debounce(notification_handler, 2800);
                     //setTimeout(notification_handler, 2800);
                 }
             })
@@ -347,8 +350,8 @@ var Pineapple = Pineapple || {};
      */
      exports.show_help = function(infusion, key) {
         var load_failed = [],
-            help_json;
-        var get_help = function(help_data) {
+            help_json,
+            get_help = function(help_data) {
             try {
                 help_json = JSON.parse(help_data);
             } catch (e) {
@@ -364,6 +367,7 @@ var Pineapple = Pineapple || {};
                 popup("<center><span class='error'>Help entry not found<span></center>");
             }
         };
+
         if (infusion != undefined && key != undefined) {
             $.get('/components/system/' + infusion + '/help.json?nocache=' + (new Date).getTime(), get_help);
             $.get('/components/infusions/' + infusion + '/help.json?nocache=' + (new Date).getTime(), get_help);
@@ -691,5 +695,14 @@ var Pineapple = Pineapple || {};
         }
         $('.hidden_bar').slideToggle('fast');
      };
+
+    $(document).ready(function () {
+        /*
+         run the event loop to process deferred events
+         */
+        eventLoop.run(function () {
+            window.location = '#';
+        });
+    });
 
 })(window, jQuery, Pineapple);
